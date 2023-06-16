@@ -12,18 +12,18 @@ const app = express();
 dotenv.config();
 
 
-const db=process.env.MONGO;
-
-mongoose.connect(db,{
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(()=>{
-  console.log("Database Connection Sucessfull");
-})
-.catch((err)=>{
-  console.log("Database Connection Field!!",err);
-})
+// const db=process.env.MONGO;
+// console.log(db);
+// mongoose.connect(db,{
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// })
+// .then(()=>{
+//   console.log("Database Connection Sucessfull");
+// })
+// .catch((err)=>{
+//   console.log("Database Connection Field!!",err);
+// })
 
 app.use(cors())
 app.use(cookieParser())
@@ -50,6 +50,31 @@ app.get("/user",(req,res)=>{
 app.get("/",(req,res)=>{
   res.send("wellcome to Fitbook");
 })
+
+mongoose.connect('mongodb+srv://sahebali:saheb@cluster0.xmqbh.mongodb.net/?retryWrites=true&w=majority')
+        .then((value) =>{
+            console.log('Database Connected');
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+// const connectToMongoDB = async () => {
+//   try {
+//     await mongoose.connect('mongodb+srv://sahebali:saheb@cluster0.xmqbh.mongodb.net/?retryWrites=true&w=majority', {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//     });
+//     console.log('Connected to MongoDB');
+//     // Continue with your application logic here
+//   } catch (error) {
+//     console.error('Failed to connect to MongoDB:', error);
+//     // Handle the error or retry connection if needed
+//   }
+// };
+
+// connectToMongoDB();
+
 app.listen(8000, () => {
   console.log("Connected to backend port 8000.");
 });

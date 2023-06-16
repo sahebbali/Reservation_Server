@@ -1,70 +1,24 @@
-const User=require( "../models/Auth.js");
-const bcrypt =require( "bcryptjs");
-const { createError } =require( "../utils/error.js");
-const jwt = require("jsonwebtoken");
+const User= require("../models/Auth.js");
+const bcrypt= require ("bcryptjs");
+const { createError }= require ("../utils/error.js");
+const jwt = require ("jsonwebtoken");
 
-//  const register = async (req, res, next) => {
-//   try {
-//     const salt = bcrypt.genSaltSync(10);
-//     const hash = bcrypt.hashSync(req.body.password, salt);
-
-//     const newUser = new User({
-//       ...req.body,
-//       password: hash,
-//     });
-
-//     await newUser.save();
-//     res.status(200).send("User has been created.");
-//   } catch (err) {
-//     console.log("register fail!!");
-//     console.log(err);
-
-//     next(err);
-//   }
-// };
-const register = async (req, res) => {
+ const register = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(req.body.password, salt);
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create a new user
-    const user = new User({
-      username,
-      email,
-      password: hashedPassword,
+    const newUser = new User({
+      ...req.body,
+      password: hash,
     });
 
-    // Save the user to the database
-    await user.save();
-
-    // Create a JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT, {
-      expiresIn: '1h',
-    });
-
-    // Return the user and token as a response
-    res
-    .cookie("access_token", token, {
-      httpOnly: true,
-    })
-    .status(200)
-    .json({ details: { token,username,email,
-    "message": "register successful!"} });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    await newUser.save();
+    res.status(200).send("User has been created.");
+  } catch (err) {
+    next(err);
   }
 };
-
  const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ username: req.body.username });
@@ -88,15 +42,11 @@ const register = async (req, res) => {
         httpOnly: true,
       })
       .status(200)
-      .json({ details: { ...otherDetails,"access_token": token,
-      "message": "Login successful!"}, isAdmin });
+      .json({ details: { ...otherDetails }, isAdmin });
   } catch (err) {
     next(err);
   }
 };
-
-// module.exports = register;
-// module.exports = login;
-module.exports ={
-  login, register
- };
+module.exports={
+  login,register
+};

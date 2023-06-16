@@ -1,5 +1,6 @@
 const User =require("../models/User.js");
 
+
  const updateUser = async (req,res,next)=>{
   try {
     const updatedUser = await User.findByIdAndUpdate(
